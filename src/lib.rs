@@ -1,19 +1,19 @@
 #![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/README.md"))]
 
 use {
-    anyhow::Result,
+    anyhow::{Result, anyhow},
     std::path::{Path, PathBuf},
 };
 
 mod functions;
-use functions::{get_dir, get_mods};
+use functions::get_mods;
 
 /**
 Get Rust source files in mod order
 
 # Errors
 
-- Fails to get directory
+- File does not exist
 - Fails to get module(s)
 */
 pub fn find_rs_mod(files: &[&Path]) -> Result<Vec<PathBuf>> {
@@ -23,11 +23,12 @@ pub fn find_rs_mod(files: &[&Path]) -> Result<Vec<PathBuf>> {
         if file.exists() {
             r.push(file.to_path_buf());
 
-            let dir = get_dir(file)?;
-
-            let modules = get_mods(file, &dir)?;
+            let modules = get_mods(file)?;
             let modules = modules.iter().map(PathBuf::as_path).collect::<Vec<_>>();
+
             r.append(&mut find_rs_mod(&modules)?);
+        } else {
+            return Err(anyhow!("File `{}` does not exist", file.display()));
         }
     }
 

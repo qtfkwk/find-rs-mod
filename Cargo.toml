@@ -1,6 +1,6 @@
 [package]
 name = "find-rs-mod"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 description = "List Rust source files in mod order"
 repository = "https://github.com/qtfkwk/find-rs-mod"
