@@ -28,6 +28,27 @@ find-rs-mod
 !run:cd .. && target/debug/find-rs-mod
 ```
 
+## Use with other utilities
+
+Pipe to [`treeify`]:
+
+```bash
+find-rs-mod |treeify
+```
+
+```text
+!run:cd .. && target/debug/find-rs-mod |treeify
+```
+
+Pipe to `xargs *command*`:
+
+- Run `find-rs-mod |xargs bat` to view the files via `bat`
+- Run `find-rs-mod |xargs hx` to open the files in helix editor
+- ...
+
+[`treeify`]:
+https://crates.io/crates/treeify
+
 # Library
 
 ```rust

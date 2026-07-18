@@ -38,6 +38,29 @@ src/lib.rs
 src/functions.rs
 ```
 
+## Use with other utilities
+
+Pipe to [`treeify`]:
+
+```bash
+find-rs-mod |treeify
+```
+
+```text
+src
+├── lib.rs
+└── functions.rs
+```
+
+Pipe to `xargs *command*`:
+
+- Run `find-rs-mod |xargs bat` to view the files via `bat`
+- Run `find-rs-mod |xargs hx` to open the files in helix editor
+- ...
+
+[`treeify`]:
+https://crates.io/crates/treeify
+
 # Library
 
 ```rust
