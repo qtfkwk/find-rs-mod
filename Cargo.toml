@@ -1,0 +1,12 @@
+[package]
+name = "find-rs-mod"
+version = "0.1.0"
+edition = "2024"
+description = "List Rust source files in mod order"
+repository = "https://github.com/qtfkwk/find-rs-mod"
+license = "MIT"
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive", "wrap_help"] }
+clap-cargo = "0"
