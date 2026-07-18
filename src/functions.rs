@@ -1,7 +1,8 @@
 use {
     anyhow::{Result, anyhow},
     std::{
-        fs::read_to_string,
+        fs::File,
+        io::{BufRead, BufReader},
         path::{Path, PathBuf},
     },
 };
@@ -17,24 +18,36 @@ pub fn get_mods(file: &Path) -> Result<Vec<PathBuf>> {
                         dir.join(stem)
                     };
 
-                    match read_to_string(file) {
-                        Ok(content) => {
+                    match File::open(file) {
+                        Ok(f) => {
+                            let reader = BufReader::new(f);
+
                             let mut r = vec![];
 
-                            for line in content.lines() {
-                                for prefix in ["mod ", "pub mod "] {
-                                    if let Some(s) = line.strip_prefix(prefix)
-                                        && let Some(s) = s.strip_suffix(';')
-                                    {
-                                        r.push(dir.join(format!("{s}.rs")));
-                                        break;
+                            for line in reader.lines() {
+                                match line {
+                                    Ok(line) => {
+                                        for prefix in ["mod ", "pub mod "] {
+                                            if let Some(s) = line.strip_prefix(prefix)
+                                                && let Some(s) = s.strip_suffix(';')
+                                            {
+                                                r.push(dir.join(format!("{s}.rs")));
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    Err(e) => {
+                                        return Err(anyhow!(
+                                            "Could not read line in file `{}`: {e}",
+                                            file.display(),
+                                        ));
                                     }
                                 }
                             }
 
                             Ok(r)
                         }
-                        Err(e) => Err(anyhow!("Could not read file `{}`: {e}", file.display())),
+                        Err(e) => Err(anyhow!("Could not open file `{}`: {e}", file.display())),
                     }
                 }
                 None => Err(anyhow!(
