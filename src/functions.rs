@@ -1,3 +1,6 @@
+//--------------------------------------------------------------------------------------------------
+// Crates
+
 use {
     anyhow::{Result, anyhow},
     std::{
@@ -7,15 +10,19 @@ use {
     },
 };
 
+//--------------------------------------------------------------------------------------------------
+// Functions
+
+/// Get the file paths for modules referenced in a Rust source file
 pub fn get_mods(file: &Path) -> Result<Vec<PathBuf>> {
     match file.parent() {
-        Some(dir) => match file.file_stem() {
+        Some(parent) => match file.file_stem() {
             Some(stem) => match stem.to_str() {
                 Some(stem) => {
                     let dir = if file == Path::new("src/lib.rs") {
-                        dir.to_path_buf()
+                        parent.to_path_buf()
                     } else {
-                        dir.join(stem)
+                        parent.join(stem)
                     };
 
                     match File::open(file) {
@@ -29,10 +36,35 @@ pub fn get_mods(file: &Path) -> Result<Vec<PathBuf>> {
                                     Ok(line) => {
                                         for prefix in ["mod ", "pub mod "] {
                                             if let Some(s) = line.strip_prefix(prefix)
-                                                && let Some(s) = s.strip_suffix(';')
+                                                && let Some(name) = s.strip_suffix(';')
                                             {
-                                                r.push(dir.join(format!("{s}.rs")));
-                                                break;
+                                                let name_rs = dir.join(format!("{name}.rs"));
+                                                let name_mod_rs = parent.join(name).join("mod.rs");
+
+                                                match (name_rs.exists(), name_mod_rs.exists()) {
+                                                    (true, false) => {
+                                                        r.push(name_rs);
+                                                        break;
+                                                    }
+                                                    (false, true) => {
+                                                        r.push(name_mod_rs);
+                                                        break;
+                                                    }
+                                                    (true, true) => {
+                                                        return Err(anyhow!(
+                                                            "Both `{}` and `{}` exist",
+                                                            name_rs.display(),
+                                                            name_mod_rs.display()
+                                                        ));
+                                                    }
+                                                    (false, false) => {
+                                                        return Err(anyhow!(
+                                                            "Neither `{}` nor `{}` exist",
+                                                            name_rs.display(),
+                                                            name_mod_rs.display()
+                                                        ));
+                                                    }
+                                                }
                                             }
                                         }
                                     }

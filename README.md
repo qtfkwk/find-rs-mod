@@ -26,7 +26,7 @@ find-rs-mod -V
 ```
 
 ```text
-find-rs-mod 0.2.1
+find-rs-mod 0.2.3
 ```
 
 ```bash

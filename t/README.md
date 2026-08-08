@@ -9,7 +9,7 @@ find-rs-mod -h
 ```
 
 ```text
-!run:../target/debug/find-rs-mod -h
+!run:../target/release/find-rs-mod -h
 ```
 
 ```bash
@@ -17,7 +17,7 @@ find-rs-mod -V
 ```
 
 ```text
-!run:../target/debug/find-rs-mod -V
+!run:../target/release/find-rs-mod -V
 ```
 
 ```bash
@@ -25,7 +25,7 @@ find-rs-mod
 ```
 
 ```text
-!run:cd .. && target/debug/find-rs-mod
+!run:cd .. && target/release/find-rs-mod
 ```
 
 ## Use with other utilities
@@ -37,7 +37,7 @@ find-rs-mod |treeify
 ```
 
 ```text
-!run:cd .. && target/debug/find-rs-mod |treeify
+!run:cd .. && target/release/find-rs-mod |treeify
 ```
 
 Pipe to `xargs *command*`:
